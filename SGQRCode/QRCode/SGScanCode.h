@@ -32,6 +32,12 @@
 /// @param completion       回调方法，读取成功时，回调参数 result 等于二维码数据，否则等于 nil
 - (void)readQRCode:(UIImage *)image completion:(void (^)(NSString *result))completion;
 
+/// 读取图片中的多个二维码
+///
+/// @param image            图片
+/// @param resultsCompletion       回调方法，读取成功时，回调参数 result 等于二维码数据，否则等于 nil
+- (void)readQRCode:(UIImage *)image resultsCompletion:(void (^)(NSArray<NSString *> *))resultsCompletion;
+
 /// 设置视频缩放因子（捕获内容）
 - (void)setVideoZoomFactor:(CGFloat)factor;
 

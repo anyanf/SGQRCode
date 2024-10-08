@@ -16,6 +16,12 @@
 /// @param result       扫描二维码数据
 - (void)scanCode:(SGScanCode *)scanCode result:(NSString *)result;
 
+/// 扫描多二维码结果函数
+///
+/// @param scanCode     SGScanCode 对象
+/// @param results       扫描二维码数据数组
+- (void)scanCode:(SGScanCode *)scanCode results:(NSArray<NSString *> *)results;
+
 @end
 
 

@@ -105,6 +105,31 @@
     }
 }
 
+- (void)readQRCode:(UIImage *)image resultsCompletion:(void (^)(NSArray<NSString *> *))resultsCompletion {
+    CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeQRCode context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyHigh}];
+    // 获取识别结果
+    NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image.CGImage]];
+    
+    NSMutableArray<NSString *> *results = [NSMutableArray array];
+
+    for (CIQRCodeFeature *feature in features) {
+        NSString *tempMessageString = feature.messageString;
+        if (tempMessageString) {
+            [results addObject:tempMessageString];
+        }
+    }
+
+    if (resultsCompletion) {
+        resultsCompletion(results);
+    }
+    
+    if ([SGQRCodeLog sharedQRCodeLog].log) {
+        for (NSString *result in results) {
+            NSLog(@"图片中的二维码数据：%@", result);
+        }
+    }
+}
+
 - (void)setVideoZoomFactor:(CGFloat)factor {
     if (factor > self.device.maxAvailableVideoZoomFactor) {
         factor = self.device.maxAvailableVideoZoomFactor;
@@ -246,17 +271,31 @@
 #pragma mark - - AVCaptureMetadataOutputObjectsDelegate 的方法
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection {
     if (metadataObjects != nil && metadataObjects.count > 0) {
-        AVMetadataMachineReadableCodeObject *obj = metadataObjects[0];
-        NSString *resultString = obj.stringValue;
+        
+        NSMutableArray<NSString *> *results = [NSMutableArray array];
+
+        for (AVMetadataMachineReadableCodeObject *obj in metadataObjects) {
+            NSString *resultString = obj.stringValue;
+            if (resultString) {
+                [results addObject:resultString];
+            }
+        }
 
         dispatch_async(dispatch_get_main_queue(), ^{
             if (self.delegate && [self.delegate respondsToSelector:@selector(scanCode:result:)]) {
-                [self.delegate scanCode:self result:resultString];
+                [self.delegate scanCode:self result:results.firstObject];
             }
+            
+            if (self.delegate && [self.delegate respondsToSelector:@selector(scanCode:results:)]) {
+                [self.delegate scanCode:self results:results.copy];
+            }
+            
         });
 
         if ([SGQRCodeLog sharedQRCodeLog].log) {
-            NSLog(@"扫描的二维码数据：%@", obj);
+            for (NSString *result in results) {
+                NSLog(@"扫描的二维码数据：%@", result);
+            }
         }
     }
 }
