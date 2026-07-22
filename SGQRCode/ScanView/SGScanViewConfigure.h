@@ -59,6 +59,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// 辅助扫描边角长度，默认为：20.0f
 @property (nonatomic, assign) CGFloat cornerLength;
 
+/// 扫描框宽度，默认为 0（0 表示使用默认值 0.7 * self.frame.size.width）
+@property (nonatomic, assign) CGFloat scanBoxWidth;
+
+/// 扫描框高度，默认为 0（0 表示使用默认值，等于扫描框宽度）
+@property (nonatomic, assign) CGFloat scanBoxHeight;
+
 @end
 
 NS_ASSUME_NONNULL_END

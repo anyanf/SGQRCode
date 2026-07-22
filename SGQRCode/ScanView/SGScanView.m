@@ -49,13 +49,25 @@
 }
 
 - (void)initialization {
-    CGFloat w = 0.7 * self.frame.size.width;
-    CGFloat h = w;
+    CGFloat w, h;
+
+    if (self.configure.scanBoxWidth > 0) {
+        w = self.configure.scanBoxWidth;
+    } else {
+        w = 0.7 * self.frame.size.width;
+    }
+
+    if (self.configure.scanBoxHeight > 0) {
+        h = self.configure.scanBoxHeight;
+    } else {
+        h = w;
+    }
+
     CGFloat x = 0.5 * (self.frame.size.width - w);
     CGFloat y = 0.5 * (self.frame.size.height - h);
     _borderFrame = CGRectMake(x, y, w, h);
     _scanFrame = CGRectMake(x, y, w, h);
-    
+
     self.isTop = YES;
 }
 
